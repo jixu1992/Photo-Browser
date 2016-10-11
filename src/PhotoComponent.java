@@ -7,8 +7,11 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -22,13 +25,14 @@ import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-public class PhotoComponent extends JComponent {
+public class PhotoComponent extends JComponent implements MouseListener, KeyListener{
 	private BufferedImage image;
 	static int width, height;
 	boolean isFlipped = false;
 	Dimension initialSize;
 	Dimension preferredSize;
 	private int choice = 1;//default choice is drawing
+	static String keystr="";
 	
 	Drawing[] itemList = new Drawing[8000];
 	int R = 0;
@@ -81,12 +85,11 @@ public class PhotoComponent extends JComponent {
                    RenderingHints.VALUE_RENDER_QUALITY);
 			g2d.setClip(rect);
 			
-			
-				int  i = 0;
-				while(i<=index) {
-					draw(g2d,itemList[i]);
-					i++;
-				}
+			int  i = 0;
+			while(i<=index) {
+				draw(g2d,itemList[i]);
+				i++;
+			}
 		
 			
 		}
@@ -112,8 +115,11 @@ public class PhotoComponent extends JComponent {
 
 		setVisible(true);
 		
-		addMouseListener(new MouseA());
+		addMouseListener(this);
 		addMouseMotionListener(new MouseB());
+		
+		
+		final String input;
 		
 		createNewItem();
 		
@@ -129,11 +135,9 @@ public class PhotoComponent extends JComponent {
 
 	void createNewItem(){
 		if(choice == 1){
-			setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 			itemList[index] = new DrawPencil();
 		}
 		if(choice == 2){
-			setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
 			itemList[index] = new TextPen();
 		}
 		
@@ -150,54 +154,13 @@ public class PhotoComponent extends JComponent {
 	public void setChoice(int choice) {
 		this.choice = choice;
 	}
-
-	class MouseA extends MouseAdapter{
-		
-		public void mousePressed(MouseEvent me) {			
-			itemList[index].x1 = itemList[index].x2 = me.getX();
-			itemList[index].y1 = itemList[index].y2 = me.getY();
-			
-			if(choice == 1){
-				itemList[index].x1 = itemList[index].x2 = me.getX();
-				itemList[index].y1 = itemList[index].y2 = me.getY();
-				index++;
-				createNewItem();
-				//repaint();
-			}
-			if(choice == 2){
-				itemList[index].x1 = me.getX();
-				itemList[index].y1 = me.getY();
-				//String input = br.readLine();
-				String input = "Default text...";
-				itemList[index].s1 = input;
-				
-				index++;
-				choice = 2;
-				createNewItem();
-				repaint();
-			}
-			
-		}
-		
-		public void mouseReleased(MouseEvent me) {
-			//if((itemList[index].x1<width/2+image.getWidth())&&(itemList[index].x1>width/2-image.getWidth()))
-			if(choice == 1){
-				itemList[index].x1 = me.getX();
-				itemList[index].y1 = me.getY();
-			}
-			
-			itemList[index].x2 = me.getX();
-			itemList[index].y2 = me.getY();
-			repaint();
-			index++;
-			createNewItem();
-		}
-	}
 	
+
+
 	class MouseB extends MouseMotionAdapter{
 		public void mouseDragged(MouseEvent me){
 			if(choice == 1){
-				itemList[index-1].x1 = itemList[index].x2 = itemList[index].x1 =me.getX();
+				itemList[index-1].x1 = itemList[index].x2 = itemList[index].x1 = me.getX();
 	  		    itemList[index-1].y1 = itemList[index].y2 = itemList[index].y1 = me.getY();
 	  		    index++;
 	  		    createNewItem();
@@ -209,6 +172,99 @@ public class PhotoComponent extends JComponent {
 			repaint();
 			
 		}
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		display(e);
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		display(e);	
+		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		display(e);
+	}
+	
+	protected void display(KeyEvent e){
+		
+		int eventID = e.getID();
+		if (eventID == KeyEvent.KEY_TYPED){
+			char key = e.getKeyChar();
+			keystr+=key;
+		}
+		
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		itemList[index].x1 = itemList[index].x2 = e.getX();
+		itemList[index].y1 = itemList[index].y2 = e.getY();
+		
+		if(choice == 1){
+			itemList[index].x1 = itemList[index].x2 = e.getX();
+			itemList[index].y1 = itemList[index].y2 = e.getY();
+			index++;
+			createNewItem();
+			//repaint();
+		}
+		if(choice == 2){
+			this.setRequestFocusEnabled(true);
+			
+			
+			itemList[index].x1 = e.getX();
+			itemList[index].y1 = e.getY();
+			requestFocus();
+			//String input = br.readLine();
+			addKeyListener(this);
+			itemList[index].s1 = keystr;
+			
+			index++;
+			choice = 2;
+			createNewItem();
+			repaint();
+		}
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		if(choice == 1){
+			itemList[index].x1 = e.getX();
+			itemList[index].y1 = e.getY();
+		}
+		
+		itemList[index].x2 = e.getX();
+		itemList[index].y2 = e.getY();
+		repaint();
+		index++;
+		createNewItem();
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 		
 }
