@@ -187,6 +187,48 @@ public class PhotoBrowser extends JFrame{
 		statusBar.setText(status);
 	}
 	
+	public void importImageTest(){
+		PhotoComponent pc = new PhotoComponent("pikachu.png");
+		JScrollPane imgScroll = new JScrollPane(pc);
+		imgScroll.setOpaque(false);
+		imgScroll.getViewport().setOpaque(false);
+		
+		imgScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		imgScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		myPanel.removeAll();
+		myPanel.add(imgScroll, BorderLayout.CENTER);
+		myPanel.revalidate();
+		pc.repaint();	
+		
+		pc.addMouseListener(new MouseAdapter(){
+			public void mouseClicked(MouseEvent e){
+		        if(e.getClickCount()==2){
+		            pc.setFlipped(!pc.isFlipped);
+		            pc.repaint();
+		        }
+		        
+		        if(pc.isFlipped()){
+					btnDraw.addActionListener(new ActionListener(){
+						public void actionPerformed(ActionEvent e){
+							pc.setChoice(1);
+							System.out.println("Drawing");
+							//pc.repaint();
+						}
+					});
+					
+					btnText.addActionListener(new ActionListener(){
+						public void actionPerformed(ActionEvent e){
+							pc.setChoice(2);
+							System.out.println("Texting");
+							//pc.repaint();
+						}
+					});
+				}
+		    }
+			
+			
+		});
+	}
 	public void importImage() {
 			int result = chooser.showOpenDialog(null);
 			if(result == JFileChooser.APPROVE_OPTION){

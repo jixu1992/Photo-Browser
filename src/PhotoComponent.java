@@ -33,6 +33,7 @@ public class PhotoComponent extends JComponent implements MouseListener, KeyList
 	Dimension preferredSize;
 	private int choice = 1;//default choice is drawing
 	static String keystr="";
+	static char key;
 	
 	Drawing[] itemList = new Drawing[8000];
 	int R = 0;
@@ -66,10 +67,7 @@ public class PhotoComponent extends JComponent implements MouseListener, KeyList
 		Rectangle2D rect = new Rectangle2D.Float();
 		rect.setFrame((this.getWidth()-image.getWidth())/2, (this.getHeight()-image.getHeight())/2, image.getWidth(), image.getHeight());
 		super.paintComponent(g);
-		System.out.println(this.getWidth());
-		System.out.println(this.getHeight());
-		System.out.println(image.getWidth());
-		System.out.println(image.getHeight());
+		
 		if(!isFlipped){
 			g.drawImage(image, (this.getWidth()-image.getWidth())/2, (this.getHeight()-image.getHeight())/2, null);
 			//System.out.println("Photo imported!");
@@ -119,7 +117,6 @@ public class PhotoComponent extends JComponent implements MouseListener, KeyList
 		addMouseMotionListener(new MouseB());
 		
 		
-		final String input;
 		
 		createNewItem();
 		
@@ -165,10 +162,10 @@ public class PhotoComponent extends JComponent implements MouseListener, KeyList
 	  		    index++;
 	  		    createNewItem();
 			}
-			else{
+			/*else{
 				itemList[index].x2 = me.getX();
 	    		itemList[index].y2 = me.getY();
-			}
+			}*/
 			repaint();
 			
 		}
@@ -183,6 +180,7 @@ public class PhotoComponent extends JComponent implements MouseListener, KeyList
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
+		
 		display(e);	
 		
 	}
@@ -196,8 +194,11 @@ public class PhotoComponent extends JComponent implements MouseListener, KeyList
 	protected void display(KeyEvent e){
 		
 		int eventID = e.getID();
+		
 		if (eventID == KeyEvent.KEY_TYPED){
-			char key = e.getKeyChar();
+			
+			key = e.getKeyChar();
+			//createNewItem();
 			keystr+=key;
 		}
 		
@@ -223,20 +224,22 @@ public class PhotoComponent extends JComponent implements MouseListener, KeyList
 			//repaint();
 		}
 		if(choice == 2){
-			this.setRequestFocusEnabled(true);
 			
 			
 			itemList[index].x1 = e.getX();
 			itemList[index].y1 = e.getY();
-			requestFocus();
-			//String input = br.readLine();
 			addKeyListener(this);
-			itemList[index].s1 = keystr;
+			this.setFocusable(true);
+			requestFocus();
 			
+			//itemList[index].s1 = key+"";
+		
+			itemList[index].s1 = keystr;
 			index++;
+			keystr="";
 			choice = 2;
 			createNewItem();
-			repaint();
+			//repaint();
 		}
 	}
 
