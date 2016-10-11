@@ -27,6 +27,9 @@ public class PhotoBrowser extends JFrame{
 	static JLabel statusBar = new JLabel("Hello");	
 	private JFileChooser chooser;	
 	private Box bx = Box.createVerticalBox();
+	private JButton btnDraw = new JButton("Draw");
+	private JButton btnText = new JButton("Text");
+
 	private JPanel myPanel = new JPanel(new BorderLayout()){
 		protected void paintComponent(Graphics g) {  
             ImageIcon icon = new ImageIcon("wallpaper.jpg");  
@@ -169,10 +172,19 @@ public class PhotoBrowser extends JFrame{
 		stPanel.add(statusBar);
 		add(stPanel, BorderLayout.SOUTH);
 		
+		
+		
+		stPanel.add(btnDraw);
+		stPanel.add(btnText);
+				
 		setPreferredSize(new Dimension(600, 400));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		pack();
 		
+	}
+	
+	public void setStatusBar(String status){
+		statusBar.setText(status);
 	}
 	
 	public void importImage() {
@@ -199,8 +211,30 @@ public class PhotoBrowser extends JFrame{
 				            pc.setFlipped(!pc.isFlipped);
 				            pc.repaint();
 				        }
+				        
+				        if(pc.isFlipped()){
+							btnDraw.addActionListener(new ActionListener(){
+								public void actionPerformed(ActionEvent e){
+									pc.setChoice(1);
+									System.out.println("Drawing");
+									//pc.repaint();
+								}
+							});
+							
+							btnText.addActionListener(new ActionListener(){
+								public void actionPerformed(ActionEvent e){
+									pc.setChoice(2);
+									System.out.println("Texting");
+									//pc.repaint();
+								}
+							});
+						}
 				    }
+					
+					
 				});
+				
+				
 			}						
 	}
 	
@@ -212,30 +246,30 @@ public class PhotoBrowser extends JFrame{
 	public void deletePhoto(){
 		myPanel.removeAll();
 		repaint();
-		statusBar.setText("Photo Deleted!");
+		setStatusBar("Photo Deleted");
 	}
 	
 	public void browserMode(){
-		statusBar.setText("Browser Mode!");
+		setStatusBar("Browser Mode!");
 	}
 	
 	public void photoViewerMode(){
-		statusBar.setText("Photo Viewer Mode!");
+		setStatusBar("Photo Viewer Mode!");
 	}
 	
 	public void splitMode(){
-		statusBar.setText("Split Mode!");
+		setStatusBar("Split Mode!");
 	}
 	
 	public void familyMode(){
-		statusBar.setText("Photo category: family!");
+		setStatusBar("Photo category: family!");
 	}
 	
 	public void vacationMode(){
-		statusBar.setText("Photo category: vacation!");
+		setStatusBar("Photo category: vacation!");
 	}
 	
 	public void schoolMode(){
-		statusBar.setText("Photo category: school!");
+		setStatusBar("Photo category: school!");
 	}
 }
