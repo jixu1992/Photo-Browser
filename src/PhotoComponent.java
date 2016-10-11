@@ -96,7 +96,7 @@ public class PhotoComponent extends JComponent implements MouseListener, KeyList
 
 
 	void draw(Graphics2D g2d, Drawing j){
-		j.draw(g2d);
+		j.draw(g2d, this, image);
 	}
 	
 
@@ -157,8 +157,8 @@ public class PhotoComponent extends JComponent implements MouseListener, KeyList
 	class MouseB extends MouseMotionAdapter{
 		public void mouseDragged(MouseEvent me){
 			if(choice == 1){
-				itemList[index-1].x1 = itemList[index].x2 = itemList[index].x1 = me.getX();
-	  		    itemList[index-1].y1 = itemList[index].y2 = itemList[index].y1 = me.getY();
+				itemList[index-1].x1 = itemList[index].x2 = itemList[index].x1 = me.getX()-(width-image.getWidth())/2;
+	  		    itemList[index-1].y1 = itemList[index].y2 = itemList[index].y1 = me.getY()-(height-image.getHeight())/2;
 	  		    index++;
 	  		    createNewItem();
 			}
@@ -213,12 +213,12 @@ public class PhotoComponent extends JComponent implements MouseListener, KeyList
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
-		itemList[index].x1 = itemList[index].x2 = e.getX();
-		itemList[index].y1 = itemList[index].y2 = e.getY();
+		itemList[index].x1 = itemList[index].x2 = e.getX()-(width-image.getWidth())/2;
+		itemList[index].y1 = itemList[index].y2 = e.getY()-(height-image.getHeight())/2;
 		
 		if(choice == 1){
-			itemList[index].x1 = itemList[index].x2 = e.getX();
-			itemList[index].y1 = itemList[index].y2 = e.getY();
+			itemList[index].x1 = itemList[index].x2 = e.getX()-(width-image.getWidth())/2;
+			itemList[index].y1 = itemList[index].y2 = e.getY()-(height-image.getHeight())/2;
 			index++;
 			createNewItem();
 			//repaint();
@@ -226,8 +226,8 @@ public class PhotoComponent extends JComponent implements MouseListener, KeyList
 		if(choice == 2){
 			
 			
-			itemList[index].x1 = e.getX();
-			itemList[index].y1 = e.getY();
+			itemList[index].x1 = e.getX()-(width-image.getWidth())/2;
+			itemList[index].y1 = e.getY()-(height-image.getHeight())/2;
 			addKeyListener(this);
 			this.setFocusable(true);
 			requestFocus();
@@ -247,12 +247,12 @@ public class PhotoComponent extends JComponent implements MouseListener, KeyList
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
 		if(choice == 1){
-			itemList[index].x1 = e.getX();
-			itemList[index].y1 = e.getY();
+			itemList[index].x1 = e.getX()-(width-image.getWidth())/2;
+			itemList[index].y1 = e.getY()-(height-image.getHeight())/2;
 		}
 		
-		itemList[index].x2 = e.getX();
-		itemList[index].y2 = e.getY();
+		itemList[index].x2 = e.getX()-(width-image.getWidth())/2;
+		itemList[index].y2 = e.getY()-(height-image.getHeight())/2;
 		repaint();
 		index++;
 		createNewItem();
