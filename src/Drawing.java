@@ -13,8 +13,7 @@ public class Drawing implements Serializable{
 	int R, G, B;
 	float stroke;
 	String s1;
-	void draw(Graphics2D g2d, PhotoComponent pc, BufferedImage image){		
-		
+	void draw(Graphics2D g2d, PhotoComponent pc, BufferedImage image) {
 	}
 }
 

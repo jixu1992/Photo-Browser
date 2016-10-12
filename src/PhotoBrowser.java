@@ -27,10 +27,13 @@ public class PhotoBrowser extends JFrame{
 	static JLabel statusBar = new JLabel("Hello");	
 	private JFileChooser chooser;	
 	private Box bx = Box.createVerticalBox();
+	private Box bxMode = Box.createHorizontalBox();
 	private JButton btnDraw = new JButton("Draw");
 	private JButton btnText = new JButton("Text");
 
+	//The background panel of the photo browser
 	private JPanel myPanel = new JPanel(new BorderLayout()){
+		//Set the background picture
 		protected void paintComponent(Graphics g) {  
             ImageIcon icon = new ImageIcon("wallpaper.jpg");  
             Image img = icon.getImage();  
@@ -49,8 +52,10 @@ public class PhotoBrowser extends JFrame{
 	public PhotoBrowser(){
 		super("My photo browser");
 		
+		//The main menu bar on top
 		JMenuBar menuBar = new JMenuBar();
 		
+		//The menus "file" and "view" in the main menu bar
 		JMenu menu1 = new JMenu("File");
 		JMenu menu2 = new JMenu("View");
 		
@@ -61,21 +66,17 @@ public class PhotoBrowser extends JFrame{
 		
 		chooser = new JFileChooser();
 		
+		//File -> Import/Delete/Quit
 		JMenuItem importItem = new JMenuItem("Import");
 		JMenuItem deleteItem = new JMenuItem("Delete");
 		JMenuItem quitItem = new JMenuItem("Quit");
 		
 		
-		//myPanel.setBackground(null);
-		//myPanel.add(new ImagePanel());
-		//JFrame frame = new JFrame();
-		//frame.getContentPane().add(new ImagePanel());
-		//frame.setVisible(true);
 		add(myPanel, BorderLayout.CENTER);
 					
 		importItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){				
-				importImage();
+				importImageTest();
 			}
 		});
 			
@@ -95,6 +96,7 @@ public class PhotoBrowser extends JFrame{
 		menu1.add(deleteItem);
 		menu1.add(quitItem);
 		
+		//Different viewing modes
 		JRadioButton photoViewerButton = new JRadioButton("Photo viewer", true);
 		JRadioButton browserButton = new JRadioButton("Browser", false);
 		JRadioButton splitModeButton = new JRadioButton("Split mode", false);
@@ -126,14 +128,26 @@ public class PhotoBrowser extends JFrame{
 		bGroup.add(browserButton);
 		bGroup.add(splitModeButton);	
 		
+		//The panel on the left
 		JPanel tbPanel = new JPanel();
 		
+		//The mode panel on top of the photo area
+		JPanel modePanel = new JPanel();
+		
+		//Tool bar in the left panel
 		JToolBar tBar = new JToolBar();
 		
+		//Tool bar on the top panel
+		JToolBar tBarMode = new JToolBar();
+		
 		add(tBar,BorderLayout.NORTH);
+		add(tBarMode, BorderLayout.SOUTH);
 		tBar.add(bx);
+		tBarMode.add(bxMode);
 		tbPanel.add(tBar);
+		modePanel.add(tBarMode);
 		add(tbPanel,BorderLayout.WEST);
+		add(modePanel, BorderLayout.NORTH);
 
 		JToggleButton familyButton = new JToggleButton("Family",true);
 		JToggleButton vacationButton = new JToggleButton("Vacation",false);
@@ -174,8 +188,8 @@ public class PhotoBrowser extends JFrame{
 		
 		
 		
-		stPanel.add(btnDraw);
-		stPanel.add(btnText);
+		bxMode.add(btnDraw);
+		bxMode.add(btnText);
 				
 		setPreferredSize(new Dimension(600, 400));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -247,6 +261,7 @@ public class PhotoBrowser extends JFrame{
 				myPanel.revalidate();
 				pc.repaint();	
 				
+				//Double click to change the flipping of the photo
 				pc.addMouseListener(new MouseAdapter(){
 					public void mouseClicked(MouseEvent e){
 				        if(e.getClickCount()==2){
@@ -254,7 +269,7 @@ public class PhotoBrowser extends JFrame{
 				            pc.repaint();
 				        }
 				        
-				        if(pc.isFlipped()){
+				        if(pc.isFlipped()){//If this is the back side of the photo
 							btnDraw.addActionListener(new ActionListener(){
 								public void actionPerformed(ActionEvent e){
 									pc.setChoice(1);
@@ -270,8 +285,10 @@ public class PhotoBrowser extends JFrame{
 									//pc.repaint();
 								}
 							});
+							pc.repaint();
 						}
 				    }
+					
 					
 					
 				});

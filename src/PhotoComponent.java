@@ -32,8 +32,8 @@ public class PhotoComponent extends JComponent implements MouseListener, KeyList
 	Dimension initialSize;
 	Dimension preferredSize;
 	private int choice = 1;//default choice is drawing
-	static String keystr="";
-	static char key;
+	String keystr="";
+	char key;
 	boolean typingActivated = false;
 	int keyX, keyY;
 	
@@ -44,6 +44,7 @@ public class PhotoComponent extends JComponent implements MouseListener, KeyList
 	int B = 0;
 	float stroke = 2.0f;
 	int index = 0;
+	int indexTemp = 0;
 	
 	public boolean isFlipped() {
 		return isFlipped;
@@ -90,8 +91,9 @@ public class PhotoComponent extends JComponent implements MouseListener, KeyList
 			while(i<=index) {
 				draw(g2d,itemList[i]);
 				i++;
+				repaint();
 			}
-			repaint();
+			
 		
 			
 		}
@@ -119,7 +121,7 @@ public class PhotoComponent extends JComponent implements MouseListener, KeyList
 		
 		addMouseListener(this);
 		addMouseMotionListener(new MouseB());
-		
+		addKeyListener(this);
 		
 		
 		createNewItem();
@@ -178,8 +180,8 @@ public class PhotoComponent extends JComponent implements MouseListener, KeyList
 	  		    createNewItem();
 			}
 			else{
-				itemList[index].x2 = me.getX();
-	    		itemList[index].y2 = me.getY();
+				itemList[index].x2 = me.getX()-(width-image.getWidth())/2;
+	    		itemList[index].y2 = me.getY()-(height-image.getHeight())/2;
 			}
 			repaint();
 			
@@ -215,10 +217,7 @@ public class PhotoComponent extends JComponent implements MouseListener, KeyList
 				key = e.getKeyChar();				
 				keystr+=key;
 				createNewItem(keystr, keyX, keyY);
-				repaint();
-			
-			
-			
+				repaint();			
 		}
 		
 	}
@@ -248,7 +247,7 @@ public class PhotoComponent extends JComponent implements MouseListener, KeyList
 			keystr = "";
 			keyX = itemList[index].x1 = e.getX()-(width-image.getWidth())/2;
 			keyY = itemList[index].y1 = e.getY()-(height-image.getHeight())/2;
-			addKeyListener(this);
+			
 			this.setFocusable(true);
 			requestFocus();
 			
@@ -257,10 +256,11 @@ public class PhotoComponent extends JComponent implements MouseListener, KeyList
 			//itemList[index].s1 = keystr;
 			
 			//keystr="";
-			//choice = 2;
 			
+			index++;
 			createNewItem(keystr, keyX, keyY);
 			//index++;
+			//choice = 2;
 			repaint();
 			//index++;
 			
