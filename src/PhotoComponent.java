@@ -34,6 +34,9 @@ public class PhotoComponent extends JComponent implements MouseListener, KeyList
 	private int choice = 1;//default choice is drawing
 	static String keystr="";
 	static char key;
+	boolean typingActivated = false;
+	int keyX, keyY;
+	
 	
 	Drawing[] itemList = new Drawing[8000];
 	int R = 0;
@@ -88,6 +91,7 @@ public class PhotoComponent extends JComponent implements MouseListener, KeyList
 				draw(g2d,itemList[i]);
 				i++;
 			}
+			repaint();
 		
 			
 		}
@@ -144,6 +148,17 @@ public class PhotoComponent extends JComponent implements MouseListener, KeyList
 		itemList[index].stroke = stroke ;
 	}
 	
+	void createNewItem(String str, int x, int y){
+		itemList[index] = new TextPen();
+		itemList[index].x1 = x;
+		itemList[index].y1 = y;
+		itemList[index].s1 = keystr;
+		itemList[index].R = R;
+		itemList[index].G = G;
+		itemList[index].B = B;
+		itemList[index].stroke = stroke ;
+	}
+	
 	public int getChoice() {
 		return choice;
 	}
@@ -162,10 +177,10 @@ public class PhotoComponent extends JComponent implements MouseListener, KeyList
 	  		    index++;
 	  		    createNewItem();
 			}
-			/*else{
+			else{
 				itemList[index].x2 = me.getX();
 	    		itemList[index].y2 = me.getY();
-			}*/
+			}
 			repaint();
 			
 		}
@@ -195,11 +210,15 @@ public class PhotoComponent extends JComponent implements MouseListener, KeyList
 		
 		int eventID = e.getID();
 		
-		if (eventID == KeyEvent.KEY_TYPED){
+		if (eventID == KeyEvent.KEY_PRESSED){
 			
-			key = e.getKeyChar();
-			//createNewItem();
-			keystr+=key;
+				key = e.getKeyChar();				
+				keystr+=key;
+				createNewItem(keystr, keyX, keyY);
+				repaint();
+			
+			
+			
 		}
 		
 	}
@@ -213,6 +232,7 @@ public class PhotoComponent extends JComponent implements MouseListener, KeyList
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
+		
 		itemList[index].x1 = itemList[index].x2 = e.getX()-(width-image.getWidth())/2;
 		itemList[index].y1 = itemList[index].y2 = e.getY()-(height-image.getHeight())/2;
 		
@@ -221,25 +241,29 @@ public class PhotoComponent extends JComponent implements MouseListener, KeyList
 			itemList[index].y1 = itemList[index].y2 = e.getY()-(height-image.getHeight())/2;
 			index++;
 			createNewItem();
-			//repaint();
+			repaint();
 		}
 		if(choice == 2){
 			
-			
-			itemList[index].x1 = e.getX()-(width-image.getWidth())/2;
-			itemList[index].y1 = e.getY()-(height-image.getHeight())/2;
+			keystr = "";
+			keyX = itemList[index].x1 = e.getX()-(width-image.getWidth())/2;
+			keyY = itemList[index].y1 = e.getY()-(height-image.getHeight())/2;
 			addKeyListener(this);
 			this.setFocusable(true);
 			requestFocus();
 			
 			//itemList[index].s1 = key+"";
 		
-			itemList[index].s1 = keystr;
-			index++;
-			keystr="";
-			choice = 2;
-			createNewItem();
-			//repaint();
+			//itemList[index].s1 = keystr;
+			
+			//keystr="";
+			//choice = 2;
+			
+			createNewItem(keystr, keyX, keyY);
+			//index++;
+			repaint();
+			//index++;
+			
 		}
 	}
 
@@ -249,13 +273,20 @@ public class PhotoComponent extends JComponent implements MouseListener, KeyList
 		if(choice == 1){
 			itemList[index].x1 = e.getX()-(width-image.getWidth())/2;
 			itemList[index].y1 = e.getY()-(height-image.getHeight())/2;
+			itemList[index].x2 = e.getX()-(width-image.getWidth())/2;
+			itemList[index].y2 = e.getY()-(height-image.getHeight())/2;
+			repaint();
+			index++;
+			createNewItem();
+		}
+		if(choice == 2){
+			//itemList[index].x2 = e.getX()-(width-image.getWidth())/2;
+			//itemList[index].y2 = e.getY()-(height-image.getHeight())/2;
+			repaint();
+			index++;
+			createNewItem(keystr, keyX, keyY);
 		}
 		
-		itemList[index].x2 = e.getX()-(width-image.getWidth())/2;
-		itemList[index].y2 = e.getY()-(height-image.getHeight())/2;
-		repaint();
-		index++;
-		createNewItem();
 	}
 
 	@Override
