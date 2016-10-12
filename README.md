@@ -1,6 +1,6 @@
 # advancedIS
-This is the homework for the course Advanced Programming of Interactive Systems.
-Photo browser
+This is the homework PHOTO BROWSER for the course Advanced Programming of Interactive Systems.
+
 Problems:
-- Texts are not added in real time. Users have to first type the letters then click on the back of the photo, and the letters will appear.
-- Letters appear more times than needed.
+- Only one block of text can be correctly typed.
+- When switching from text mode to drawing mode, first click of the mouse changes the position of the text.
