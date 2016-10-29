@@ -1,4 +1,4 @@
-# advancedIS
-This is the homework PHOTO BROWSER for the course Advanced Programming of Interactive Systems.
+# Photo-Browser
+This is a java photo browser integrated with a scene graph architecture.
 
 
