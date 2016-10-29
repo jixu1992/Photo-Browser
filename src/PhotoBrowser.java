@@ -18,53 +18,73 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+/**
+ * @author jinxu
+ * This is the main class of this photo browser.
+ */
 public class PhotoBrowser extends JFrame{
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	static JLabel statusBar = new JLabel("Hello");	
-	private JFileChooser chooser;	
-	private Box bx = Box.createVerticalBox();
-	private Box bxMode = Box.createHorizontalBox();
-	private JButton btnDraw = new JButton("Draw");
-	private JButton btnText = new JButton("Text");
+	private Box categoryBtnBox = Box.createVerticalBox();
+	
+	//Shape choice buttons
+	JButton pencil = new JButton("pencil");
+	JButton ellipse = new JButton("ellipse");
+	JButton rectangle = new JButton("rectangle");
+	JButton straightline = new JButton("line");
+	
+	//Shape button group
+	ButtonGroup shapeButtonGroup = new ButtonGroup();
+	
+	public boolean hasImage;
+	
+	private JToolBar shapeTBar;	
+	private ArrayList<PhotoComponent> listPC = new ArrayList<PhotoComponent>();	
+	private PhotoComponent photo_canvas = new PhotoComponent();
+	
+
+	public PhotoComponent getPhoto_canvas() {
+		return photo_canvas;
+	}
+
+	public void setPhoto_canvas(PhotoComponent photo_canvas) {
+		this.photo_canvas = photo_canvas;
+	}
 
 	//The background panel of the photo browser
-	private JPanel myPanel = new JPanel(new BorderLayout()){
+	private JPanel mainPanel = new JPanel(new BorderLayout()){
 		//Set the background picture
 		protected void paintComponent(Graphics g) {  
             ImageIcon icon = new ImageIcon("wallpaper.jpg");  
             Image img = icon.getImage();  
-            g.drawImage(img, 0, 0, myPanel.getWidth(),  
-                    myPanel.getHeight(), icon.getImageObserver());  
+            g.drawImage(img, 0, 0, mainPanel.getWidth(),  
+                    mainPanel.getHeight(), icon.getImageObserver());  
             //setSize(icon.getIconWidth(), icon.getIconHeight());  
 
         }  
 	};
 	
 	public static void main(String[] args){
-		PhotoBrowser myphototheque = new PhotoBrowser();
-		myphototheque.setVisible(true);		
+		PhotoBrowser pBrowser = new PhotoBrowser();
+		pBrowser.setVisible(true);
 	}
 	
 	public PhotoBrowser(){
 		super("My photo browser");
 		
 		//The main menu bar on top
-		JMenuBar menuBar = new JMenuBar();
+		JMenuBar topMenu = new JMenuBar();
 		
 		//The menus "file" and "view" in the main menu bar
-		JMenu menu1 = new JMenu("File");
-		JMenu menu2 = new JMenu("View");
+		JMenu fileMenu = new JMenu("File");
+		JMenu viewMenu = new JMenu("View");
 		
-		setJMenuBar(menuBar);
+		setJMenuBar(topMenu);
 		
-		menuBar.add(menu1);
-		menuBar.add(menu2);
-		
-		chooser = new JFileChooser();
+		//Add the 2 menus on the top menu
+		topMenu.add(fileMenu);
+		topMenu.add(viewMenu);
 		
 		//File -> Import/Delete/Quit
 		JMenuItem importItem = new JMenuItem("Import");
@@ -72,11 +92,11 @@ public class PhotoBrowser extends JFrame{
 		JMenuItem quitItem = new JMenuItem("Quit");
 		
 		
-		add(myPanel, BorderLayout.CENTER);
+		add(mainPanel, BorderLayout.CENTER);
 					
 		importItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){				
-				importImageTest();
+				importImage();
 			}
 		});
 			
@@ -92,9 +112,9 @@ public class PhotoBrowser extends JFrame{
 			}
 		});
 				
-		menu1.add(importItem);
-		menu1.add(deleteItem);
-		menu1.add(quitItem);
+		fileMenu.add(importItem);
+		fileMenu.add(deleteItem);
+		fileMenu.add(quitItem);
 		
 		//Different viewing modes
 		JRadioButton photoViewerButton = new JRadioButton("Photo viewer", true);
@@ -119,40 +139,30 @@ public class PhotoBrowser extends JFrame{
 			}
 		});
 				
-		menu2.add(photoViewerButton);
-		menu2.add(browserButton);
-		menu2.add(splitModeButton);
+		viewMenu.add(photoViewerButton);
+		viewMenu.add(browserButton);
+		viewMenu.add(splitModeButton);
 		
-		ButtonGroup bGroup = new ButtonGroup();
-		bGroup.add(photoViewerButton);
-		bGroup.add(browserButton);
-		bGroup.add(splitModeButton);	
+		ButtonGroup viewBtnGroup = new ButtonGroup();
+		viewBtnGroup.add(photoViewerButton);
+		viewBtnGroup.add(browserButton);
+		viewBtnGroup.add(splitModeButton);	
 		
 		//The panel on the left
 		JPanel tbPanel = new JPanel();
-		
-		//The mode panel on top of the photo area
-		JPanel modePanel = new JPanel();
-		
+				
 		//Tool bar in the left panel
-		JToolBar tBar = new JToolBar();
+		JToolBar leftTBar = new JToolBar();
+		add(leftTBar,BorderLayout.NORTH);
 		
-		//Tool bar on the top panel
-		JToolBar tBarMode = new JToolBar();
-		
-		add(tBar,BorderLayout.NORTH);
-		add(tBarMode, BorderLayout.SOUTH);
-		tBar.add(bx);
-		tBarMode.add(bxMode);
-		tbPanel.add(tBar);
-		modePanel.add(tBarMode);
+		leftTBar.add(categoryBtnBox);		
+		tbPanel.add(leftTBar);		
 		add(tbPanel,BorderLayout.WEST);
-		add(modePanel, BorderLayout.NORTH);
 
 		JToggleButton familyButton = new JToggleButton("Family",true);
 		JToggleButton vacationButton = new JToggleButton("Vacation",false);
 		JToggleButton schoolButton = new JToggleButton("School",false);
-		
+				
 		familyButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				familyMode();
@@ -171,130 +181,117 @@ public class PhotoBrowser extends JFrame{
 			}
 		});
 		
-		bx.add(familyButton);
-		bx.add(vacationButton);
-		bx.add(schoolButton);
+		categoryBtnBox.add(familyButton);
+		categoryBtnBox.add(vacationButton);
+		categoryBtnBox.add(schoolButton);
 		
-		ButtonGroup bg = new ButtonGroup();
-		bg.add(familyButton);
-		bg.add(vacationButton);
-		bg.add(schoolButton);
-		
+		ButtonGroup categoryBtnGroup = new ButtonGroup();
+		categoryBtnGroup.add(familyButton);
+		categoryBtnGroup.add(vacationButton);
+		categoryBtnGroup.add(schoolButton);
 		
 		
 		JPanel stPanel = new JPanel();
 		stPanel.add(statusBar);
 		add(stPanel, BorderLayout.SOUTH);
-		
-		
-		
-		bxMode.add(btnDraw);
-		bxMode.add(btnText);
 				
-		setPreferredSize(new Dimension(600, 400));
+		JPanel shapePanel = new JPanel();
+		shapeTBar = new JToolBar();
+		shapeTBar.setVisible(true);
+		
+		shapePanel.add(shapeTBar);
+							
+		add(shapeTBar, BorderLayout.NORTH);
+									
+		shapeTBar.add(pencil);
+		shapeTBar.add(ellipse);
+		shapeTBar.add(rectangle);
+		shapeTBar.add(straightline);
+		
+		
+		shapeButtonGroup.add(pencil);
+		shapeButtonGroup.add(ellipse);
+		shapeButtonGroup.add(rectangle);
+		shapeButtonGroup.add(straightline);
+		
+		//initialize the selected button
+		shapeButtonGroup.setSelected(pencil.getModel(),true);
+
+		setPreferredSize(new Dimension(1000, 800));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		pack();
 		
 	}
 	
+
+
 	public void setStatusBar(String status){
 		statusBar.setText(status);
 	}
 	
-	public void importImageTest(){
-		PhotoComponent pc = new PhotoComponent("pikachu.png");
-		JScrollPane imgScroll = new JScrollPane(pc);
+	public void importImage() {		
+		//choose a local file
+		JFileChooser jfilechooser = new JFileChooser();
+		jfilechooser.setMultiSelectionEnabled(true);
+		int result = jfilechooser.showOpenDialog(this);
+		if(result == JFileChooser.APPROVE_OPTION){
+			File[] listFiles = jfilechooser.getSelectedFiles();
+			statusBar.setText("Importing Photos!");
+			for(File f:listFiles){
+				photo_canvas.importPhoto(f.getPath());
+				System.out.println(photo_canvas);
+				photo_canvas.setNewImage(true);
+				listPC.add(photo_canvas);
+			}
+		}		
+		initImage();
+		setShapeTool();
+	}
+	
+	public void initImage() {
+		JScrollPane imgScroll = new JScrollPane(photo_canvas);
 		imgScroll.setOpaque(false);
 		imgScroll.getViewport().setOpaque(false);
 		
 		imgScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		imgScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		myPanel.removeAll();
-		myPanel.add(imgScroll, BorderLayout.CENTER);
-		myPanel.revalidate();
-		pc.repaint();	
-		
-		pc.addMouseListener(new MouseAdapter(){
-			public void mouseClicked(MouseEvent e){
-		        if(e.getClickCount()==2){
-		            pc.setFlipped(!pc.isFlipped);
-		            pc.repaint();
-		        }
-		        
-		        if(pc.isFlipped()){
-					btnDraw.addActionListener(new ActionListener(){
-						public void actionPerformed(ActionEvent e){
-							pc.setChoice(1);
-							System.out.println("Drawing");
-							//pc.repaint();
-						}
-					});
-					
-					btnText.addActionListener(new ActionListener(){
-						public void actionPerformed(ActionEvent e){
-							pc.setChoice(2);
-							System.out.println("Texting");
-							//pc.repaint();
-						}
-					});
-				}
-		    }
-			
-			
-		});
+		mainPanel.removeAll();
+		mainPanel.add(imgScroll, BorderLayout.CENTER);
+		mainPanel.revalidate();
+		photo_canvas.repaint();	
+		photo_canvas.isFlipped = false;
 	}
-	public void importImage() {
-			int result = chooser.showOpenDialog(null);
-			if(result == JFileChooser.APPROVE_OPTION){
-				
-				String imgpath = chooser.getSelectedFile().getPath();
-				PhotoComponent pc = new PhotoComponent(imgpath);
-					
-				JScrollPane imgScroll = new JScrollPane(pc);
-				imgScroll.setOpaque(false);
-				imgScroll.getViewport().setOpaque(false);
-				
-				imgScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-				imgScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-				myPanel.removeAll();
-				myPanel.add(imgScroll, BorderLayout.CENTER);
-				myPanel.revalidate();
-				pc.repaint();	
-				
-				//Double click to change the flipping of the photo
-				pc.addMouseListener(new MouseAdapter(){
-					public void mouseClicked(MouseEvent e){
-				        if(e.getClickCount()==2){
-				            pc.setFlipped(!pc.isFlipped);
-				            pc.repaint();
-				        }
-				        
-				        if(pc.isFlipped()){//If this is the back side of the photo
-							btnDraw.addActionListener(new ActionListener(){
-								public void actionPerformed(ActionEvent e){
-									pc.setChoice(1);
-									System.out.println("Drawing");
-									//pc.repaint();
-								}
-							});
-							
-							btnText.addActionListener(new ActionListener(){
-								public void actionPerformed(ActionEvent e){
-									pc.setChoice(2);
-									System.out.println("Texting");
-									//pc.repaint();
-								}
-							});
-							pc.repaint();
-						}
-				    }
-					
-					
-					
-				});
-				
-				
-			}						
+	
+	public void setShapeTool(){
+		pencil.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				photo_canvas.setShapeChoice(0);
+				System.out.println(photo_canvas.getShapeChoice());
+				shapeButtonGroup.setSelected(pencil.getModel(),true);
+			}
+		});
+		ellipse.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				photo_canvas.setShapeChoice(1);
+				System.out.println(photo_canvas.getShapeChoice());
+				shapeButtonGroup.setSelected(ellipse.getModel(),true);
+			}
+		});
+		rectangle.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				photo_canvas.setShapeChoice(2);
+				System.out.println(photo_canvas.getShapeChoice());
+				shapeButtonGroup.setSelected(rectangle.getModel(),true);
+			}
+		});
+		straightline.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				photo_canvas.setShapeChoice(3);
+				System.out.println(photo_canvas.getShapeChoice());
+				shapeButtonGroup.setSelected(straightline.getModel(),true);
+			}
+		});
+		
 	}
 	
 	public void closeWindow(){
@@ -303,7 +300,7 @@ public class PhotoBrowser extends JFrame{
 	}
 	
 	public void deletePhoto(){
-		myPanel.removeAll();
+		mainPanel.removeAll();
 		repaint();
 		setStatusBar("Photo Deleted");
 	}
